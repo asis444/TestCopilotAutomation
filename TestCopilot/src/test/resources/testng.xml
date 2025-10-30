@@ -1,0 +1,23 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="BDD Cucumber Test Suite">
+
+    <!--
+    The listeners tag is crucial for integrating Extent Reports.
+    It tells TestNG to use your TestListener for reporting events.
+    -->
+    <listeners>
+        <listener class-name="com.automation.listeners.TestListener" />
+    </listeners>
+
+    <test name="Login Functionality Tests">
+        <classes>
+            <!--
+            We now run the Cucumber TestRunner class.
+            This class will find and execute all your .feature files
+            and their corresponding step definitions.
+            -->
+            <class name="com.automation.tests.TestRunner" />
+        </classes>
+    </test>
+
+</suite>

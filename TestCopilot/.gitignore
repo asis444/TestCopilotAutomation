@@ -1,0 +1,19 @@
+# Compiled class files, temporary files, and IDE workspace files
+
+# Maven build directory
+target/
+
+# Eclipse specific files
+.classpath
+.project
+.settings/
+
+# Output folders
+test-output/
+logs/
+automation-rolling.log
+
+# IDE specific files
+.metadata
+*.log
+*.iml
