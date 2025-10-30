@@ -2,15 +2,16 @@ name: Nightly Cucumber Regression
 
 on:
   schedule:
-    - cron: '0 17 * * *'  # Runs every night at 10:30 PM IST
-  workflow_dispatch:       # Manual trigger option
+    - cron: '0 17 * * *' # Runs daily at 10:30 PM IST
+  workflow_dispatch:
 
 jobs:
   run-tests:
+    name: Run Cucumber Regression Suite
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -22,4 +23,32 @@ jobs:
 
       - name: Run Maven Tests (Headless)
         working-directory: ./TestCopilot
-        run: mvn clean install -Dcucumber.filter.tags="@regression" -Dheadless=true
+        run: |
+          mvn clean install -Dcucumber.filter.tags="@regression" -Dheadless=true \
+            -Dcucumber.plugin="pretty, html:target/cucumber-reports/cucumber.html, json:target/cucumber-reports/cucumber.json, junit:target/cucumber-reports/cucumber.xml"
+
+      # ✅ Upload Cucumber HTML report
+      - name: Upload Cucumber HTML Report
+        if: always()  # Runs even if tests fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: Cucumber-HTML-Report
+          path: ./TestCopilot/target/cucumber-reports/**/*.html
+
+      # ✅ Upload JUnit XML report (for GitHub Actions summary)
+      - name: Upload JUnit Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: JUnit-Results
+          path: ./TestCopilot/target/cucumber-reports/*.xml
+
+      # ✅ Publish test results to GitHub Actions summary
+      - name: Publish JUnit Test Report in GitHub Actions
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Cucumber Test Results
+          path: ./TestCopilot/target/cucumber-reports/*.xml
+          reporter: java-junit
+          fail-on-error: true  # Causes workflow to fail if any test fails
