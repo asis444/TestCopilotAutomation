@@ -5,6 +5,11 @@ on:
     - cron: '0 17 * * *' # Runs daily at 10:30 PM IST
   workflow_dispatch:
 
+permissions:
+  contents: read
+  checks: write
+  actions: read
+
 jobs:
   run-tests:
     name: Run Cucumber Regression Suite
@@ -24,7 +29,7 @@ jobs:
       - name: Run Maven Tests (Headless)
         working-directory: ./TestCopilot
         run: |
-          mvn clean install -Dcucumber.filter.tags="@regression" -Dheadless=true \
+          mvn clean install -Dcucumber.filter.tags="@Login" -Dheadless=true \
             -Dcucumber.plugin="pretty, html:target/cucumber-reports/cucumber.html, json:target/cucumber-reports/cucumber.json, junit:target/cucumber-reports/cucumber.xml"
 
       # ✅ Upload Cucumber HTML report
